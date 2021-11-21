@@ -15,10 +15,12 @@ My goal is to create a chat where the users don't need to register in my applica
 ## TODO
 
 * Improve the connection between two clients
-  * delete connection
-  * improve the chat aesthetic
-  * control what happen when another client try to access
-  * pay attention to other argument, maybe the quit one could cause some error. Maybe is better deactivate before quitting
-* Don't allow name with whitespace character
+* username
+  * Don't allow name with whitespace character
+* message errors improve in shat server
+  * selection username
+  * connect
+* add a help command to list all the possibility commands
+* clean the code, add methods to remove repeatable code
 
 ******

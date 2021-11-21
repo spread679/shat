@@ -47,7 +47,7 @@ class ShatServer:
                 raise Exception("Invalid type, must be a Configuration type.")
 
             username = packet_list[2]
-            if self._exist_username(username):
+            if username == "" or " " in username or self._exist_username(username):
                 error_code = "1"
                 continue
             return username
@@ -88,23 +88,37 @@ class ShatServer:
                 self._client_connection.send(message_type, message)
 
             elif message_type == shat_protocol.MessageType.Connection:
-                username = message
-                connection = self._exist_username(username)
+                if message == "-1":
+                    self._client_connection.send(message_type, "-1")
+                    self._client_connection.connected.send(message_type, "-1")
+                    self._client_connection.connected.connected = None
+                    self._client_connection.connected = None
+                else:
+                    username = message
 
-                if connection:
-                    connection.send(shat_protocol.MessageType.Connection, self._client_connection.username)
+                    if username != self._client_connection.username:
+                        connection = self._exist_username(username)
 
-                    message_type, packet_list = connection.receive()
-                    if packet_list[2] == "":
-                        connection.connected = self._client_connection
-                        self._client_connection.connected = connection
-                        self._client_connection.send(shat_protocol.MessageType.Connection, f"Connected: {connection.username}")
-                        connection.send(shat_protocol.MessageType.Connection, f"Connected: {self._client_connection.username}")
+                        if connection and not connection.connected:
+                            connection.send(shat_protocol.MessageType.Connection, self._client_connection.username)
 
+                            message_type, packet_list = connection.receive()
+                            if packet_list[2] == "":
+                                connection.connected = self._client_connection
+                                self._client_connection.connected = connection
+                                self._client_connection.send(shat_protocol.MessageType.Connection, f"Connected: {connection.username}")
+                                connection.send(shat_protocol.MessageType.Connection, f"Connected: {self._client_connection.username}")
+
+                            else:
+                                self._client_connection.send(shat_protocol.MessageType.Connection, "1")
+                                connection.connected = None
+                                self._client_connection.connected = None
+                        elif connection and connection.connected:
+                            self._client_connection.send(message_type, "4")
+                        else:
+                            self._client_connection.send(message_type, "3")
                     else:
-                        self._client_connection.send(shat_protocol.MessageType.Connection, "1")
-                        connection.connected = None
-                        self._client_connection.connected = None
+                        self._client_connection.send(message_type, "2")
 
             elif message_type == shat_protocol.MessageType.Message:
                 self._client_connection.connected.send(message_type, message)
