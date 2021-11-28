@@ -12,8 +12,8 @@ class ConnectionCore:
 
     # @description: send a message to a specific connection
     # @param message: the message to send
-    def send(self, message_type: shat_protocol.MessageType, message: str):
-        header = shat_protocol.get_shat_header(message_type)
+    def send(self, message_type: shat_protocol.MessageType, state, message: str):
+        header = shat_protocol.get_header(message_type, state)
         packet = header + message
         json_msg = json.dumps(packet)
         self.connection.send(json_msg.encode())

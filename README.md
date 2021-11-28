@@ -14,12 +14,11 @@ My goal is to create a chat where the users don't need to register in my applica
 
 ## TODO
 
-* Improve the connection between two clients
 * username
   * Don't allow name with whitespace character
 * message errors improve in shat server
-  * selection username
-  * connect
+  * started to improve the code
+  * pay attention if born some error codes
 * add a help command to list all the possibility commands
 * clean the code, add methods to remove repeatable code
 
